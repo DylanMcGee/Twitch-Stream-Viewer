@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+	<title>Dylan's Twitch Viewer</title>
+	<link rel="stylesheet" type="text/css" href="mycss.css">
+</head>
+
+<body>
+	<div id="primaryContainer">
+		<span>
+			<p id = "headerP">Twitch Streams</p>
+			<button id="allButton">All</button>
+			<button id="onlineButton">Online</button>
+		</span>							
+	</div>
+
+	<script type="text/javascript" src="jQuery-library.js"></script>
+	<script>
+		var streamArray = ["ESL_SC2", "moonduckTV", "freecodecamp", "byunprime", "bananaslamjamma", "trumpsc", "merlinidota", "savjz"];
+		var linkAndName = {
+
+		}
+		for(var j=0; j<streamArray.length; j++){
+			linkAndName["https://api.twitch.tv/kraken/streams/"+streamArray[j]] = streamArray[j];
+		}
+		for(var i=0; i<streamArray.length; i++){	
+			$.getJSON("https://wind-bow.gomix.me/twitch-api/streams/"+streamArray[i], function(e){
+				if(e.stream != null){
+					var newP = $("<p>");
+					newP.addClass("stream");
+					newP.addClass("online")
+					newP.html("<a href = '" + e.stream.channel.url + "'><img src='" + e.stream.channel.logo + "'></img>" + "<span class='channelName'>"+ e.stream.channel.name + "</span></a>" + "<span class='channelStatus'>" + e.stream.channel.status + "</span>");
+					$("#primaryContainer").append(newP);	
+				}
+				else if (e.stream == null){
+					var newP = $("<p>");
+					console.log(e);
+					newP.addClass("stream");
+					newP.addClass("offline");
+					newP.html("<img src='https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRqJzlrqMeQsZ7r2QcXpIr72AlegCVAZJw6-ith48DCXHfVqli0Bw'></img>" + "<span class='channelName'>"+ linkAndName[e._links.self] + "</span>" + "<span class='channelStatus'>Offline</span>");
+					$("#primaryContainer").append(newP);
+				}
+			});
+			
+		}
+		$("#onlineButton").on("click", function(){
+			$(".offline").hide();
+		});	
+		$("#allButton").on("click", function(){
+			$(".offline").show();
+		});	
+	</script>	
+</body>
+</html>
